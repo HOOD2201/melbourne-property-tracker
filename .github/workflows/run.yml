@@ -1,0 +1,32 @@
+name: Run Melbourne Property Tracker
+
+on:
+  schedule:
+    - cron: "0 22 * * *" # runs every day at 10 PM UTC
+  workflow_dispatch: # lets you run it manually too
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install required libraries
+        run: |
+          pip install requests beautifulsoup4 pandas openpyxl
+
+      - name: Run scraper
+        run: python scraper.py
+
+      - name: Upload Excel
+        uses: actions/upload-artifact@v4
+        with:
+          name: property-data
+          path: melbourne_property_tracker.xlsx
